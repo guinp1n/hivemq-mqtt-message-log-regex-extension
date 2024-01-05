@@ -2,7 +2,7 @@
 :hivemq-support: http://www.hivemq.com/support/
 :hivemq-extension-download: https://www.hivemq.com/extension/mqtt-message-log-extension/
 
-= HiveMQ Mqtt Message Log Extension
+= HiveMQ Mqtt Message Log Extension with Regex
 
 image:https://img.shields.io/badge/Extension_Type-Logging-orange?style=for-the-badge[Extension Type]
 image:https://img.shields.io/github/v/release/hivemq/hivemq-mqtt-message-log-extension?style=for-the-badge[GitHub release (latest by date),link=https://github.com/hivemq/hivemq-mqtt-message-log-extension/releases/latest]
@@ -18,6 +18,7 @@ image:https://img.shields.io/github/actions/workflow/status/hivemq/hivemq-mqtt-m
 
 The HiveMQ MQTT Message Log Extension is a very useful HiveMQ Extension for debugging and development purposes.
 It provides the possibility to follow up on any clients communicating with the broker on the terminal.
+
 
 *The extension logs the following events:*
 
@@ -67,6 +68,24 @@ CAUTION: use verbose=true very carefully as it will flood your log immediately.
 
 Missing entries default to true. *verbose* defaults to false.
 
+=== Regex
+
+This feature branch adds support for RegEx for the topic or clientId.
+
+Modify the `mqttMessageLog.properties` file for your needs:
+
+```
+client-regex=<your client Id regex>
+topic-regex=<your topic regex>
+```
+
+Logic:
+
+. If `client-regex` is not empty, then, if the `clientId` matches, the extension should log the packet.
+. If `client-regex is empty`, the extension should log the packet of any `clientId`.
+. If `topic-regex is not empty, then, if the `topic` matches, the extension should log the (PUBLISH) packet.
+. If `topic-regex` is empty, the extension should log the packet of any `topic`.
+
 == First Steps
 
 Connect with an {hivemq-blog-tools}[MQTT client] of your choice.
@@ -98,6 +117,17 @@ User Properties: [Name: 'name0', Value: 'value0'], [Name: 'name1', Value: 'value
 ----
 "17:26:23.602 INFO - Received CONNECT from client 'clientId': Protocol version: 'V_5', Clean Start: 'false', Session Expiry Interval: '10000'"
 ----
+
+=== Regex example
+The following regex matches, if `clientId` contains character "1".
+The following regex matches, if `topic` contains character "2":
+
+```
+client-regex=.*1.*
+topic-regex=.*2.*
+```
+
+The extension will log messages, having either a matching `clientId` *or* a matching `topic`.
 
 == Need Help?
 
